@@ -88,7 +88,7 @@ GOOGLE_API_KEY=your_google_api_key
 ## Installation
 
 # Clone repository
-git clone https://github.com/USERNAME/multi-agent-calculator.git
+git clone https://github.com/AlifBata84/multi-agent-calculator.git
 
 cd multi-agent-calculator
 
