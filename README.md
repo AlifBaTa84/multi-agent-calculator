@@ -19,6 +19,24 @@ Built with:
 
 ---
 
+## Key Concepts Implemented 
+ 
+- Multi-Agent Systems (MAS)
+- Agent Orchestration (CrewAI)
+- Intent Engineering
+- Tool-Augmented AI
+- Structured Output Control
+
+---
+
+## Known Limitations
+
+- Still relies on LLM reasoning (may hallucinate edge cases)
+- Requires clear input format
+- No advanced validation layer (yet)
+
+---
+
 ## Architecture
 
 The system uses a multi-agent approach:
@@ -57,16 +75,47 @@ multi-agent-calculator/
 ├── .env               # API Key (ignored)
 └── README.md
 
-## Key Concepts Implemented 
- 
-- Multi-Agent Systems (MAS)
-- Agent Orchestration (CrewAI)
-- Prompt Engineering
-- Tool-Augmented AI
-- Structured Output Control
+---
 
-## Known Limitations
+## 🔑 Environment Setup
 
-- Still relies on LLM reasoning (may hallucinate edge cases)
-- Requires clear input format
-- No advanced validation layer (yet)
+Create `.env` file:
+
+GOOGLE_API_KEY=your_google_api_key
+
+---
+
+## Installation
+
+# Clone repository
+git clone https://github.com/USERNAME/multi-agent-calculator.git
+
+cd multi-agent-calculator
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+---
+
+## Usage 
+
+Run the system : 
+python main.py
+
+---
+
+## LLM Testing 
+
+Run the test : 
+python test_llm.py
+
+---
+
+## Developer
+
+Alif Finandhita
+
