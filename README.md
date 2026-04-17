@@ -56,3 +56,17 @@ multi-agent-calculator/
 ├── test_llm.py        # LLM test
 ├── .env               # API Key (ignored)
 └── README.md
+
+## Key Concepts Implemented 
+ 
+- Multi-Agent Systems (MAS)
+- Agent Orchestration (CrewAI)
+- Prompt Engineering
+- Tool-Augmented AI
+- Structured Output Control
+
+## Known Limitations
+
+- Still relies on LLM reasoning (may hallucinate edge cases)
+- Requires clear input format
+- No advanced validation layer (yet)
