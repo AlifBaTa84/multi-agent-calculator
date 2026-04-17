@@ -43,12 +43,16 @@ The system uses a multi-agent approach:
 
 ---
 
-## ⚙️ Project Structure
+## Project Structure
 
-## Features
-- Planner Agent
-- Architect Agent
-- Backend Agent
-- FrontEnd Agent
-- Tester Agent
-- Debugger Agent
+multi-agent-calculator/
+│
+├── agents/            # Agent definitions
+├── tools/             # Custom tools (file, execution, etc.)
+├── tasks.py           # Task definitions
+├── llm.py             # LLM configuration
+├── config.py          # Environment config
+├── main.py            # Entry point
+├── test_llm.py        # LLM test
+├── .env               # API Key (ignored)
+└── README.md
