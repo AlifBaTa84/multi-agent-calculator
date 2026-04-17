@@ -1,4 +1,4 @@
 from llm import llm
 
-response = llm.invoke("Halo, berapa 2 + 2?")
+response = llm.invoke("Buat script Python sederhana yang mencetak 'Hello, World!' ke konsol.")
 print(response.content)
