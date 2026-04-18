@@ -2,8 +2,8 @@ from crewai import Crew
 from tasks import *
 
 crew = Crew(
-    agents=[planner_agent, architect_agent, frontend_dev_agent, backend_dev_agent, tester_agent, debugger_agent],
-    tasks=[planner_task, architect_task, frontend_task, backend_task, tester_task, debugger_task],
+    agents=[planner_agent, architect_agent, frontend_dev_agent, backend_dev_agent, debugger_agent, tester_agent],
+    tasks=[planner_task, architect_task, frontend_task, backend_task, debugger_task, tester_task],
     verbose=True        
 )
 
