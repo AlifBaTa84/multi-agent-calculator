@@ -122,6 +122,10 @@ frontend_task = Task(
     expected_output="""
     - A working frontend application that meets the defined requirements and architecture.
     - Create file based on architecture design in workspace/frontend/.
+    - Output must be a single HTML file with embedded CSS and JavaScript.
+    - Must not require npm or build tools 
+    - Use Bootstrap CDN only     
+    - Ensure the frontend can run by simply opening the HTML file in a browser.
     """,
     agent=frontend_dev_agent
 )
@@ -148,6 +152,10 @@ backend_task = Task(
     - A working backend application that meets the defined requirements and architecture.
     - Provide working and testable endpoints.
     - Create file based on architecture design in workspace/backend/.
+    - Single file only
+    - No database
+    - No authentication
+    - Must run with: node server.js
     """,
     agent=backend_dev_agent
 )
