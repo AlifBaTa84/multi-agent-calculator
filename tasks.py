@@ -6,6 +6,7 @@ planner_task = Task(
     Analyze the requirements for a web-based calculator application.
 
     Your responsibilities:
+    - Define constraints and assumptions explicitly
     - Define user personas
     - Identify and categorize features (core, advanced, enhancement)
     - Create a prioritized roadmap (MVP first)
@@ -23,7 +24,7 @@ planner_task = Task(
     expected_output="""    
     JSON format:
     {
-      "status": "SUCCESS | PARTIAL | FAILED",
+      "status": "SUCCESS | PARTIAL | FAILED | NEEDS_REVISION",
       "agent": "planner",
       "data": {
         "problem_definition": "",
@@ -60,6 +61,9 @@ architect_task = Task(
     Based on the planning document, design the system architecture
     for a web-based calculator application.
 
+    Input:
+    - workspace/planner/plan.json
+    
     Your responsibilities:
     - Define system architecture (layers and approach)
     - Design modules and components
@@ -67,18 +71,22 @@ architect_task = Task(
     - Propose a suitable tech stack
     - Design project structure
     - Consider performance and security aspects
+    - Define error handling strategy
 
     Constraints:
+    - Do NOT invent new requirements
     - Do NOT write code
     - Do NOT change the defined requirements
     - Do NOT introduce unnecessary complexity
+    - MUST NOT contradict planner scope
+    - MUST align with defined features and roadmap
     - Focus only on HOW to build the system
 
     """,
     expected_output=""" 
     JSON format:
     {
-      "status": "SUCCESS",
+      "status": "SUCCESS | PARTIAL | FAILED | NEEDS_REVISION",
       "agent": "architect",
       "data": {
         "architecture_type": "",
@@ -104,11 +112,17 @@ frontend_task = Task(
     description="""
     Implement the frontend of the calculator application.  
 
+    Input:
+    - workspace/architect/architecture.json
+    - workspace/planner/plan.json
+    
     Responsibilities:
     - Build UI components based on architecture design 
     - Manage client-side state
     - Handle user interactions based on defined user flow
     - Integrate with backend API if available
+    - Handle API failure gracefully
+    - Provide user feedback for errors
 
     Constraints:
     - MUST follow UI and architecture design
@@ -116,6 +130,8 @@ frontend_task = Task(
     - Do NOT change API contract
     - Keep UI responsive and clean based on material design principles and usability best practices
     - Ensure code is modular and maintainable
+    - MUST follow API spec strictly
+    - MUST match defined user flow
 
     Ensure the application is responsive and user-friendly.
     """,
@@ -133,12 +149,18 @@ frontend_task = Task(
 backend_task = Task(
     description="""
     Implement backend services for the calculator application.
+
+    Input:
+    - workspace/architect/architecture.json
+    - workspace/planner/plan.json
     
     Responsibilities:
     - Build API endpoints
     - Handle calculation logic (if required)
     - Manage history data
     - Ensure validation and security
+    - Handle invalid expressions safely (no eval)
+    - Return consistent error format
 
     Constraints:
     - MUST follow API design strictly
@@ -171,19 +193,32 @@ tester_task = Task(
     - Identify edge cases and bugs
     - Provide structured test reports
 
+    Based on test results, generate a recommendation:
+    - If critical bugs exist → action = FIX_REQUIRED
+    - If minor issues → action = REVIEW_REQUIRED
+    - If all tests pass → action = NO_ACTION
+    - Assign priority based on severity
+    - Identify which agent is responsible
+
     Constraints:
     - Do NOT modify source code
     - Do NOT redesign system
     - Only report issues, do not fix them
     - Base testing strictly on requirements and architecture
-    - Clearly separate PASS and FAIL results
+    - Clearly separate PASS, FAIL, and NEEDS_REVISION results
     - Provide reproducible bug reports
+    - Include negative testing
+    - Include invalid input scenarios
+    - If critical bugs are found, generate feedback for relevant agents: 
+      * Backend issues → backend_dev_agent
+      * Frontend issues → frontend_dev_agent
+    
 
     """,
     expected_output="""
     JSON format:
     {
-      "status": "SUCCESS",
+      "status": "SUCCESS | PARTIAL | FAILED | NEEDS_REVISION",
       "agent": "tester",
       "data": {
         "test_cases": [],
@@ -197,7 +232,12 @@ tester_task = Task(
           "failed": 0,
           "status": ""
         }
-      }
+        "recommendation": {
+          "action": "",
+          "priority": "",
+          "target": "",
+          "reason": ""
+        }
     }
 
     - Output MUST be valid JSON
@@ -206,52 +246,5 @@ tester_task = Task(
     - Create file: workspace/test/test_report.json
     """,
     agent=tester_agent
-)
-
-debugger_task = Task(
-    description="""
-    Analyze and fix errors in the calculator application code.
-
-    Responsibilities:
-    - Detect bugs (syntax, logic, runtime)
-    - Perform root cause analysis
-    - Fix issues with minimal changes
-    - Ensure the code runs correctly after fixes
-
-    Constraints:
-    - MUST preserve existing architecture and design
-    - Do NOT add new features
-    - Do NOT refactor large parts of the system
-    - Only fix bugs and errors
-    - Keep changes minimal and targeted
-    - Do NOT change API contracts
-    - Clearly explain each fix
-
-    """,
-    expected_output="""
-    JSON format:
-    {
-    "status": "SUCCESS",
-      "agent": "debugger",
-      "data": {
-        "detected_errors": [],
-        "root_cause_analysis": [],
-        "fixes_applied": [],
-        "validation_results": [],
-        "summary": {
-          "total_errors": 0,
-          "fixed": 0,
-          "remaining": 0,
-          "status": ""
-        }
-      }
-    }
-
-    - Output MUST be valid JSON
-    - No explanation outside JSON
-    - Clearly explain each fix and its impact on the system.
-    - Create file: workspace/debugger/debug_report.json
-    """,
-    agent=debugger_agent
 )
 
