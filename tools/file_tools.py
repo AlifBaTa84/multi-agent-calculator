@@ -51,7 +51,7 @@ def run_code(file_path: str) -> str:
 
     try:
         # Menjalankan command sesuai dengan ekstensi file
-        result = subprocess.run([command, file_path], capture_output=True, text=True)
+        result = subprocess.run([command, file_path], capture_output=True, text=True, timeout=10)
         return result.stdout if result.returncode == 0 else result.stderr
     except FileNotFoundError:
         return f"Error: The command '{command}' was not found. Is it installed and in your PATH?"

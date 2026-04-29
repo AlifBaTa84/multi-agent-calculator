@@ -1,5 +1,6 @@
 from crewai import Agent
 from tools.file_tools import write_to_file, read_from_file, run_code
+from llm import llm
 
 planner_agent = Agent(
     role="Planner Agent",
@@ -9,8 +10,8 @@ planner_agent = Agent(
     user persona creation, and feature prioritization.
     You think in a structured, user-centric, and minimalistic way.
     """,
-    tools=[write_to_file],
-    llm="gemini/gemini-2.5-flash"
+    tools=[],
+    llm=llm
 )
 
 architect_agent = Agent(
@@ -22,8 +23,8 @@ architect_agent = Agent(
     You translate requirements into technical blueprints and ensure
     systems are efficient, secure, and well-structured.
     """,
-    tools=[read_from_file, write_to_file],
-    llm="gemini/gemini-2.5-flash"
+    tools=[read_from_file],
+    llm=llm
 )
 
 frontend_dev_agent = Agent(
@@ -35,7 +36,7 @@ frontend_dev_agent = Agent(
     You strictly follow design specifications and focus on user experience.
     """,
     tools=[read_from_file, write_to_file, run_code],
-    llm="gemini/gemini-2.5-flash"
+    llm=llm
 )
 
 backend_dev_agent = Agent(
@@ -47,7 +48,7 @@ backend_dev_agent = Agent(
     You focus on clean architecture, validation, and performance.
     """,
     tools=[read_from_file, write_to_file, run_code],
-    llm="gemini/gemini-2.5-flash"
+    llm=llm
 )
 
 tester_agent = Agent(
@@ -59,6 +60,6 @@ tester_agent = Agent(
     You think critically and systematically to uncover hidden issues.
     """,
     tools=[read_from_file, run_code, write_to_file],
-    llm="gemini/gemini-2.5-flash"
+    llm=llm
 )
 
