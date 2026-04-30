@@ -147,7 +147,6 @@ frontend_task = Task(
     - Do NOT implement backend logic.
     - MUST follow API spec strictly
     
-
     """,
     expected_output="A working frontend application code written to the workspace/frontend/ directory.",
     agent=frontend_dev_agent
@@ -158,8 +157,8 @@ backend_task = Task(
     Implement backend services for the calculator application.
 
     Input: You MUST read the following files using your read_from_file tool: 
-	1. workspace/planner/plan.json 
-	2. workspace/architect/architecture.json
+	  1. workspace/planner/plan.json 
+	  2. workspace/architect/architecture.json
 
     Responsibilities:
     - Build API endpoints
@@ -170,9 +169,10 @@ backend_task = Task(
 
 
     Constraints:
-    - Single file only (node server.js or python script)
-    - No database, no authentication
+    - Single file only (python script: server.py or JavaScript: server.js)
+    - No database, no authentication, use in-memory data structures if needed
     - MUST follow API design strictly
+
     """,
     expected_output="A working backend application code written to the workspace/backend/ directory.",
     agent=backend_dev_agent

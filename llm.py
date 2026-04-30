@@ -14,3 +14,8 @@ llm = LLM(
     google_api_key=api_key, 
     temperature=0
 )
+
+# llm = LLM(
+#    model="ollama/qwen2.5-coder:3b",  # Sesuaikan dengan model yang kamu unduh
+#    base_url="http://localhost:11434" # Port default Ollama
+# )

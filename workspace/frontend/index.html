@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Calculator</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+            flex-direction: column;
+        }
+
+        /* Light Mode */
+        body.light-mode {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .light-mode .calculator-container {
+            background-color: #ffffff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .light-mode .display {
+            background-color: #e9ecef;
+            color: #343a40;
+        }
+        .light-mode .btn-calculator {
+            background-color: #f0f0f0;
+            color: #343a40;
+            border: 1px solid #dee2e6;
+        }
+        .light-mode .btn-operator, .light-mode .btn-equals {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .light-mode .btn-clear, .light-mode .btn-memory, .light-mode .btn-scientific {
+            background-color: #6c757d;
+            color: #ffffff;
+        }
+        .light-mode .history-panel {
+            background-color: #e9ecef;
+            border-left: 1px solid #dee2e6;
+        }
+        .light-mode .history-item {
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            background-color: #343a40;
+            color: #f8f9fa;
+        }
+        .dark-mode .calculator-container {
+            background-color: #212529;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        .dark-mode .display {
+            background-color: #495057;
+            color: #f8f9fa;
+        }
+        .dark-mode .btn-calculator {
+            background-color: #495057;
+            color: #f8f9fa;
+            border: 1px solid #6c757d;
+        }
+        .dark-mode .btn-operator, .dark-mode .btn-equals {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .dark-mode .btn-clear, .dark-mode .btn-memory, .dark-mode .btn-scientific {
+            background-color: #6c757d;
+            color: #ffffff;
+        }
+        .dark-mode .history-panel {
+            background-color: #495057;
+            border-left: 1px solid #6c757d;
+        }
+        .dark-mode .history-item {
+            border-bottom: 1px solid #6c757d;
+        }
+
+        .calculator-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 1200px; /* Adjust as needed */
+            margin-top: 20px;
+        }
+
+        .calculator-container {
+            border-radius: 10px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px; /* Standard calculator width */
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .display {
+            padding: 20px;
+            text-align: right;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            border-bottom: 1px solid #dee2e6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .display-expression {
+            font-size: 1.2em;
+            min-height: 24px;
+            color: #6c757d;
+            word-wrap: break-word;
+        }
+
+        .display-result {
+            font-size: 2.5em;
+            font-weight: bold;
+            min-height: 48px;
+            word-wrap: break-word;
+        }
+
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            padding: 1px;
+        }
+
+        .btn-calculator {
+            border: none;
+            padding: 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            border-radius: 0; /* Remove individual button border-radius */
+        }
+
+        .btn-calculator:hover {
+            filter: brightness(90%);
+        }
+
+        .btn-equals {
+            grid-column: span 2;
+        }
+
+        .theme-switch-container {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history-panel {
+            width: 100%;
+            max-width: 300px; /* History panel width */
+            margin-left: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, border-left 0.3s;
+        }
+
+        .history-header {
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid;
+        }
+
+        .history-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .history-item {
+            padding: 10px 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .history-item:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .history-expression {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .history-result {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .history-clear-btn {
+            width: 100%;
+            padding: 10px;
+            border-top: 1px solid;
+            border-radius: 0;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .calculator-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+            .history-panel {
+                margin-left: 0;
+                margin-top: 20px;
+                max-width: 400px; /* Match calculator width on smaller screens */
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <div class="theme-switch-container">
+        <span>Light Mode</span>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="themeSwitch">
+            <label class="form-check-label" for="themeSwitch">Dark Mode</label>
+        </div>
+    </div>
+
+    <div class="calculator-wrapper">
+        <div class="calculator-container">
+            <div class="display">
+                <div id="display-expression" class="display-expression"></div>
+                <div id="display-result" class="display-result">0</div>
+                <div id="error-message" class="error-message"></div>
+            </div>
+            <div class="calculator-buttons">
+                <!-- Row 1 -->
+                <button class="btn btn-calculator btn-clear" data-action="clear-all">AC</button>
+                <button class="btn btn-calculator btn-clear" data-action="clear">C</button>
+                <button class="btn btn-calculator btn-clear" data-action="backspace">DEL</button>
+                <button class="btn btn-calculator btn-operator" data-action="operator">/</button>
+
+                <!-- Row 2 -->
+                <button class="btn btn-calculator btn-scientific" data-action="scientific" data-value="sin">sin</button>
+                <button class="btn btn-calculator btn-scientific" data-action="scientific" data-value="cos">cos</button>
+                <button class="btn btn-calculator btn-scientific" data-action="scientific" data-value="tan">tan</button>
+                <button class="btn btn-calculator btn-operator" data-action="operator">*</button>
+
+                <!-- Row 3 -->
+                <button class="btn btn-calculator" data-action="number">7</button>
+                <button class="btn btn-calculator" data-action="number">8</button>
+                <button class="btn btn-calculator" data-action="number">9</button>
+                <button class="btn btn-calculator btn-operator" data-action="operator">-</button>
+
+                <!-- Row 4 -->
+                <button class="btn btn-calculator btn-scientific" data-action="scientific" data-value="log">log</button>
+                <button class="btn btn-calculator btn-scientific" data-action="scientific" data-value="ln">ln</button>
+                <button class="btn btn-calculator btn-scientific" data-action="scientific" data-value="sqrt">sqrt</button>
+                <button class="btn btn-calculator btn-operator" data-action="operator">+</button>
+
+                <!-- Row 5 -->
+                <button class="btn btn-calculator" data-action="number">4</button>
+                <button class="btn btn-calculator" data-action="number">5</button>
+                <button class="btn btn-calculator" data-action="number">6</button>
+                <button class="btn btn-calculator btn-scientific" data-action="scientific" data-value="^">x^y</button>
+
+                <!-- Row 6 -->
+                <button class="btn btn-calculator btn-memory" data-action="memory" data-value="M+">M+</button>
+                <button class="btn btn-calculator btn-memory" data-action="memory" data-value="M-">M-</button>
+                <button class="btn btn-calculator btn-memory" data-action="memory" data-value="MR">MR</button>
+                <button class="btn btn-calculator btn-memory" data-action="memory" data-value="MC">MC</button>
+
+                <!-- Row 7 -->
+                <button class="btn btn-calculator" data-action="number">1</button>
+                <button class="btn btn-calculator" data-action="number">2</button>
+                <button class="btn btn-calculator" data-action="number">3</button>
+                <button class="btn btn-calculator btn-scientific" data-action="scientific" data-value="pi">&pi;</button>
+
+                <!-- Row 8 -->
+                <button class="btn btn-calculator" data-action="number">0</button>
+                <button class="btn btn-calculator" data-action="decimal">.</button>
+                <button class="btn btn-calculator btn-equals" data-action="equals">=</button>
+                <button class="btn btn-calculator btn-scientific" data-action="scientific" data-value="e">e</button>
+            </div>
+        </div>
+
+        <div class="history-panel">
+            <div class="history-header">Calculation History</div>
+            <div id="history-list" class="history-list">
+                <!-- History items will be inserted here -->
+            </div>
+            <button id="clear-history-btn" class="btn btn-danger history-clear-btn">Clear History</button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS CDN (optional, for some components, but not strictly needed for this calculator) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global State Variables
+        let currentExpression = '';
+        let currentResult = '0';
+        let errorState = { isError: false, message: '' };
+        let history = [];
+        let memory = 0;
+        let theme = 'light'; // Default theme
+
+        // DOM Elements
+        const displayExpression = document.getElementById('display-expression');
+        const displayResult = document.getElementById('display-result');
+        const errorMessage = document.getElementById('error-message');
+        const calculatorButtons = document.querySelector('.calculator-buttons');
+        const historyList = document.getElementById('history-list');
+        const clearHistoryBtn = document.getElementById('clear-history-btn');
+        const themeSwitch = document.getElementById('themeSwitch');
+        const body = document.body;
+
+        // --- UI Module ---
+        function updateUI() {
+            displayExpression.textContent = currentExpression;
+            displayResult.textContent = currentResult;
+
+            if (errorState.isError) {
+                errorMessage.textContent = errorState.message;
+                errorMessage.style.display = 'block';
+            } else {
+                errorMessage.textContent = '';
+                errorMessage.style.display = 'none';
+            }
+
+            renderHistory();
+            applyTheme();
+        }
+
+        function renderHistory() {
+            historyList.innerHTML = '';
+            history.forEach((entry, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.classList.add('history-item');
+                historyItem.innerHTML = `
+                    <div class="history-expression">${entry.expression}</div>
+                    <div class="history-result">${entry.result}</div>
+                `;
+                historyItem.addEventListener('click', () => {
+                    currentExpression = entry.expression;
+                    currentResult = entry.result;
+                    errorState = { isError: false, message: '' };
+                    updateUI();
+                });
+                historyList.prepend(historyItem); // Add new entries to the top
+            });
+        }
+
+        function applyTheme() {
+            body.classList.remove('light-mode', 'dark-mode');
+            body.classList.add(`${theme}-mode`);
+            themeSwitch.checked = (theme === 'dark');
+        }
+
+        // --- Calculator Core Module (Client-side simulation) ---
+        const CalculatorCore = {
+            calculate: function(expression) {
+                try {
+                    // Replace scientific function names with Math equivalents
+                    let evalExpression = expression
+                        .replace(/sin\(/g, 'Math.sin(')
+                        .replace(/cos\(/g, 'Math.cos(')
+                        .replace(/tan\(/g, 'Math.tan(')
+                        .replace(/log\(/g, 'Math.log10(') // Common log base 10
+                        .replace(/ln\(/g, 'Math.log(')    // Natural log
+                        .replace(/sqrt\(/g, 'Math.sqrt(')
+                        .replace(/\^/g, '**') // Power operator
+                        .replace(/pi/g, 'Math.PI')
+                        .replace(/e/g, 'Math.E');
+
+                    // Basic validation to prevent arbitrary code execution (limited for eval)
+                    // This is a simple client-side calculator, so eval is used for convenience.
+                    // For a production app, a safer math expression parser would be needed.
+                    if (!/^[0-9+\-*/().\s^e\piM]+$/.test(evalExpression)) {
+                        throw new Error('Invalid characters in expression.');
+                    }
+
+                    let result = eval(evalExpression);
+
+                    if (isNaN(result) || !isFinite(result)) {
+                        throw new Error('Invalid mathematical operation.');
+                    }
+                    return result.toString();
+                } catch (e) {
+                    errorState = { isError: true, message: e.message };
+                    return 'Error';
+                }
+            }
+        };
+
+        // --- History Module (Client-side simulation) ---
+        const HistoryModule = {
+            addEntry: function(expression, result) {
+                history.push({ expression, result });
+                // Keep history size manageable, e.g., last 20 entries
+                if (history.length > 20) {
+                    history.shift();
+                }
+            },
+            getHistory: function() {
+                return [...history]; // Return a copy
+            },
+            clearHistory: function() {
+                history = [];
+            }
+        };
+
+        // --- Theme Module (Client-side simulation) ---
+        const ThemeModule = {
+            setTheme: function(newTheme) {
+                theme = newTheme;
+                localStorage.setItem('calculatorTheme', newTheme); // Persist theme
+                applyTheme();
+            }
+        };
+
+        // --- Memory Module (Client-side simulation) ---
+        const MemoryModule = {
+            add: function(value) {
+                memory += parseFloat(value);
+            },
+            subtract: function(value) {
+                memory -= parseFloat(value);
+            },
+            recall: function() {
+                return memory;
+            },
+            clear: function() {
+                memory = 0;
+            }
+        };
+
+        // --- Input Handler Module ---
+        function handleButtonClick(buttonValue, actionType) {
+            errorState = { isError: false, message: '' }; // Clear error on new input
+
+            switch (actionType) {
+                case 'number':
+                case 'decimal':
+                    if (currentResult !== '0' && currentExpression === '') { // If a result is displayed and no new expression started
+                        currentExpression = buttonValue;
+                    } else {
+                        currentExpression += buttonValue;
+                    }
+                    break;
+                case 'operator':
+                    // Prevent multiple operators at the end
+                    const lastChar = currentExpression.slice(-1);
+                    if (['+', '-', '*', '/', '^'].includes(lastChar)) {
+                        currentExpression = currentExpression.slice(0, -1) + buttonValue;
+                    } else {
+                        currentExpression += buttonValue;
+                    }
+                    break;
+                case 'scientific':
+                    if (buttonValue === 'pi' || buttonValue === 'e') {
+                        currentExpression += buttonValue;
+                    } else if (buttonValue === '^') {
+                        currentExpression += '^';
+                    }
+                    else {
+                        // For functions like sin, cos, log, etc.
+                        // If there's a number in currentResult, apply function to it
+                        // Otherwise, append function name and opening parenthesis
+                        if (currentResult !== '0' && currentExpression === '') {
+                            currentExpression = `${buttonValue}(${currentResult})`;
+                            currentResult = '0'; // Clear result as it's now part of expression
+                        } else if (currentExpression !== '') {
+                            currentExpression += `${buttonValue}(`;
+                        } else {
+                            currentExpression = `${buttonValue}(`;
+                        }
+                    }
+                    break;
+                case 'equals':
+                    if (currentExpression === '') return;
+                    const result = CalculatorCore.calculate(currentExpression);
+                    currentResult = result;
+                    if (!errorState.isError) {
+                        HistoryModule.addEntry(currentExpression, currentResult);
+                    }
+                    currentExpression = ''; // Clear expression after calculation
+                    break;
+                case 'clear': // C button
+                    currentExpression = '';
+                    currentResult = '0';
+                    break;
+                case 'clear-all': // AC button
+                    currentExpression = '';
+                    currentResult = '0';
+                    errorState = { isError: false, message: '' };
+                    HistoryModule.clearHistory();
+                    MemoryModule.clear();
+                    break;
+                case 'backspace': // DEL button
+                    currentExpression = currentExpression.slice(0, -1);
+                    if (currentExpression === '') {
+                        currentResult = '0';
+                    }
+                    break;
+                case 'memory':
+                    if (buttonValue === 'M+') {
+                        MemoryModule.add(currentResult);
+                    } else if (buttonValue === 'M-') {
+                        MemoryModule.subtract(currentResult);
+                    } else if (buttonValue === 'MR') {
+                        currentExpression = MemoryModule.recall().toString();
+                    } else if (buttonValue === 'MC') {
+                        MemoryModule.clear();
+                    }
+                    break;
+            }
+            updateUI();
+        }
+
+        // Event Listeners
+        calculatorButtons.addEventListener('click', (event) => {
+            const button = event.target.closest('.btn-calculator');
+            if (!button) return;
+
+            const action = button.dataset.action;
+            const value = button.textContent; // Use textContent for numbers/operators
+            const dataValue = button.dataset.value; // Use data-value for scientific/memory
+
+            handleButtonClick(dataValue || value, action);
+        });
+
+        clearHistoryBtn.addEventListener('click', () => {
+            HistoryModule.clearHistory();
+            updateUI();
+        });
+
+        themeSwitch.addEventListener('change', (event) => {
+            const newTheme = event.target.checked ? 'dark' : 'light';
+            ThemeModule.setTheme(newTheme);
+        });
+
+        // Keyboard Input Support
+        document.addEventListener('keydown', (event) => {
+            const key = event.key;
+
+            if (/[0-9]/.test(key)) {
+                handleButtonClick(key, 'number');
+            } else if (key === '.') {
+                handleButtonClick('.', 'decimal');
+            } else if (['+', '-', '*', '/'].includes(key)) {
+                handleButtonClick(key, 'operator');
+            } else if (key === 'Enter' || key === '=') {
+                event.preventDefault(); // Prevent default form submission if any
+                handleButtonClick('=', 'equals');
+            } else if (key === 'Backspace') {
+                handleButtonClick('DEL', 'backspace');
+            } else if (key === 'Escape') { // 'Esc' for All Clear
+                handleButtonClick('AC', 'clear-all');
+            }
+            // Add more keyboard mappings for scientific/memory functions if desired
+        });
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load theme from localStorage
+            const savedTheme = localStorage.getItem('calculatorTheme');
+            if (savedTheme) {
+                theme = savedTheme;
+            }
+            updateUI();
+        });
+    </script>
+</body>
+</html>

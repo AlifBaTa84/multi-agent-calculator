@@ -54,7 +54,7 @@ def self_improving_loop(max_iter=3):
             target_agent_name = recommendation.get("target", "")
             bug_reason = recommendation.get("reason", "")
 
-            if action == "NO_ACTION" or report.get("status") == "SUCCESS":
+            if action == "NO_ACTION" :
                 print("\nSUCCESS ✅ Semua pengujian berhasil dan tidak ada bug!")
                 break
             
