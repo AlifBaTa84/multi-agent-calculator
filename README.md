@@ -104,19 +104,22 @@ The document-centric design provides a natural path toward **Retrieval-Augmented
 
 ## Architecture
 
+## Architecture
+
+```mermaid
 flowchart LR
-    subgraph Phase 1: Planning & Design
+    subgraph Phase1
         P[Planner Agent]
         A[Architect Agent]
         P -->|plan.json| A
     end
 
-    subgraph Phase 2: Development
+    subgraph Phase2
         FE[Frontend Agent]
         BE[Backend Agent]
     end
 
-    subgraph Phase 3: Testing
+    subgraph Phase3
         T[Tester Agent]
     end
 
@@ -128,13 +131,11 @@ flowchart LR
     FE -->|frontend code| T
     BE -->|backend code| T
 
-    T -->|test_report.json| LOOP
+    T -->|test_report.json| SC[System Controller main.py]
 
-    LOOP{{System Controller\n(main.py)}}
-
-    LOOP -->|assign fix| FE
-    LOOP -->|assign fix| BE
-
+    SC -->|assign fix| FE
+    SC -->|assign fix| BE
+```
 The system is built as a **document-driven multi-agent architecture** orchestrated using CrewAI. Each agent operates with a clearly defined responsibility and collaborates through **file-based artifacts**, enabling a structured and traceable workflow.
 
 ### Core Principles
@@ -196,6 +197,7 @@ The system is built as a **document-driven multi-agent architecture** orchestrat
 
 ## Workflow
 
+```mermaid
 flowchart TD
 
     START([Start])
@@ -222,6 +224,7 @@ flowchart TD
 
     FIX_FE --> T1
     FIX_BE --> T1
+```
 
 1. Planner and Architect define the solution  
 2. Frontend and Backend agents implement the system  
